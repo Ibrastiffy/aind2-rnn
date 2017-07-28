@@ -1,9 +1,8 @@
 import numpy as np
 
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Activation
 from keras.layers import LSTM
-import keras
 
 
 # and window-size into a set of input/output pairs for use with our RNN model
@@ -46,8 +45,8 @@ def cleaned_text(text):
 ### TODO: fill out the function below that transforms the input text and window-size into a set of input/output pairs for use with our RNN model
 def window_transform_text(text, window_size, step_size):
     # containers for input/output pairs
-    inputs = []
-    outputs = []
+    inputs = [text[i:i + window_size] for i in range(0, len(text) - window_size, step_size)]
+    outputs = [text[i] for i in range(window_size, len(text), step_size)]
 
     return inputs, outputs
 
@@ -55,4 +54,8 @@ def window_transform_text(text, window_size, step_size):
 # TODO build the required RNN model:
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars):
-    pass
+    model = Sequential()
+    model.add(LSTM(units=200, input_shape=(window_size, num_chars)))
+    model.add(Dense(units=num_chars))
+    model.add(Activation('softmax'))
+    return model
